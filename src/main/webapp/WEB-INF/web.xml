@@ -18,7 +18,7 @@
     </servlet-mapping>
 
     <listener>
-        <listener-class>dk.kb.avischk.qa.web.ContextListener</listener-class>
+        <listener-class>dk.kb.avischk.qa.web.WebQAContextListener</listener-class>
     </listener>
 
 

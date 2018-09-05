@@ -15,8 +15,10 @@ public class NewspaperQADaoFactory {
     
     private static boolean initialized = false;
     private static ComboPooledDataSource connectionPool;
+    private static NewspaperQADao daoInstance = null;
     
-    public static synchronized void initialize(String jdbcConnectionString) throws PropertyVetoException {
+    public static synchronized void initialize(String jdbcConnectionString, String jdbcUser, 
+            String jdbcPassword) throws PropertyVetoException {
         if(! initialized) {
             log.info("Initializing NewspaperQADaoFactory");
             initialized = true;
@@ -29,8 +31,21 @@ public class NewspaperQADaoFactory {
             connectionPool = new ComboPooledDataSource();
             connectionPool.setDriverClass(POSTGREQL_DB_DRIVER);
             connectionPool.setJdbcUrl(jdbcConnectionString);
-            
+            connectionPool.setUser(jdbcUser);
+            connectionPool.setPassword(jdbcPassword);
         }
+    }
+    
+    public static synchronized NewspaperQADao getInstance() {
+        if(! initialized) {
+            throw new RuntimeException("NewspaperQADaoFactory has not been initialized");
+        }
+        
+        if(daoInstance == null) {
+            daoInstance = new NewspaperQADao(connectionPool); 
+        }
+        
+        return daoInstance;
     }
     
     

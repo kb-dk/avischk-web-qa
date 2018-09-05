@@ -33,7 +33,9 @@ public class WebQAContextListener implements ServletContextListener {
             log.info("Initializing WebQA service v{}", getClass().getPackage().getImplementationVersion());
             InitialContext ctx = new InitialContext();
             String jdbcConnectionString = (String) ctx.lookup("java:/comp/env/avischk-web-qa/jdbc-connection-string");
-            NewspaperQADaoFactory.initialize(jdbcConnectionString);
+            String jdbcUser = (String) ctx.lookup("java:/comp/env/avischk-web-qa/jdbc-user");
+            String jdbcPassword = (String) ctx.lookup("java:/comp/env/avischk-web-qa/jdbc-password");
+            NewspaperQADaoFactory.initialize(jdbcConnectionString, jdbcUser, jdbcPassword);
         } catch (NamingException e) {
             throw new RuntimeException("Failed to lookup settings", e);
         } catch (PropertyVetoException e) {
