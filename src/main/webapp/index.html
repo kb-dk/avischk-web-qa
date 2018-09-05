@@ -1,0 +1,33 @@
+<html lang="da">
+	<head>
+	    <title>QA tool til avis arkiver</title>
+	    <meta charset="utf-8">
+	</head>
+	
+	<body>
+
+        <div id="links">her kommer links hvis der er nogen i database ...</div>
+	
+	    <script src="jquery-3.3.1.min.js"></script>
+	    
+	    <script>
+	    
+	    function loadNewspaperIDs() {
+	      $.getJSON('web-qa/getNewspaperIDs', {}, function(ids) {
+	        var content = "Kendte avis ider: <br>";
+	        for(var i = 0; i < ids.length; i++) {
+	            content += ids[i] + "<br>"
+	        }
+	        $("#links").html(content);
+	      });
+	    }
+	    
+	    $(document).ready(function(){
+	        // Load page content
+	        loadNewspaperIDs();
+	      }); 
+	    </script>
+	    
+	</body>
+
+</html>
