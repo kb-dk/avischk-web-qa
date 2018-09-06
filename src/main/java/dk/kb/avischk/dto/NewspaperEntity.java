@@ -1,5 +1,6 @@
 package dk.kb.avischk.dto;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,6 +18,7 @@ public class NewspaperEntity {
     private String sectionTitle; 
     private String editionTitle;
     private Date deliveryDate;
+    private BigInteger handle;
     
     public NewspaperEntity() {}
 
@@ -100,6 +102,12 @@ public class NewspaperEntity {
         this.deliveryDate = deliveryDate;
     }
     
+    public BigInteger getHandle() {
+        return handle;
+    }
     
+    public void setHandle(BigInteger handle) {
+        this.handle = handle;
+    }
     
 }

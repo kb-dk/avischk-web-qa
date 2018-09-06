@@ -1,5 +1,6 @@
 package dk.kb.avischk.dao;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -91,6 +92,7 @@ public class NewspaperQADao {
                        entity.setSectionTitle(res.getString("section_title"));
                        entity.setEditionTitle(res.getString("edition_title"));
                        entity.setDeliveryDate(res.getDate("delivery_date"));
+                       entity.setHandle(BigInteger.valueOf(res.getLong("handle")));
                        list.add(entity);
                    }
                    return list;
