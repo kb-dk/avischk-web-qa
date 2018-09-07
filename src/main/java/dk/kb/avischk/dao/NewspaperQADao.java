@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +50,61 @@ public class NewspaperQADao {
     
     public List<Date> getDatesForNewspaperID(String id) throws DAOFailureException {
         log.debug("Looking up dates for newspaper id: '{}'", id);
-        String SQL = "SELECT distinct(edition_date) FROM newspaperarchive WHERE avisid = ?";
+        String SQL = "SELECT distinct(edition_date) FROM newspaperarchive WHERE avisid = ? ORDER BY edition_date ASC";
         
         try (Connection conn = connectionPool.getConnection();
                 PreparedStatement ps = conn.prepareStatement(SQL)) {
                
                ps.setString(1, id);
+               try (ResultSet res = ps.executeQuery()) {
+                   List<Date> list = new ArrayList<>();
+                   
+                   while(res.next()) {
+                       list.add(res.getDate(1));
+                   }
+                   return list;
+               }
+           } catch (SQLException e) {
+               log.error("Failed to lookup edition dates for newspaper id {}", id, e);
+               throw new DAOFailureException("Err looking up dates for newspaper id", e);
+           }
+    }
+    
+    public List<String> getYearsForNewspaperID(String id) throws DAOFailureException {
+        log.debug("Looking up dates for newspaper id: '{}'", id);
+        String SQL = "SELECT distinct(EXTRACT(YEAR from edition_date)) AS year FROM newspaperarchive WHERE avisid = ? ORDER BY year ASC";
+        
+        try (Connection conn = connectionPool.getConnection();
+                PreparedStatement ps = conn.prepareStatement(SQL)) {
+               
+               ps.setString(1, id);
+               try (ResultSet res = ps.executeQuery()) {
+                   List<String> list = new ArrayList<>();
+                   
+                   while(res.next()) {
+                       list.add("" + res.getInt(1));
+                   }
+                   return list;
+               }
+           } catch (SQLException e) {
+               log.error("Failed to lookup edition dates for newspaper id {}", id, e);
+               throw new DAOFailureException("Err looking up dates for newspaper id", e);
+           }
+    }
+    
+    public List<Date> getDatesForNewspaperID(String id, String year) throws DAOFailureException {
+        log.debug("Looking up dates for newspaper id: '{}', in year", id, year);
+        
+        String SQL = "SELECT distinct(edition_date) FROM newspaperarchive WHERE avisid = ?"
+                + " AND edition_date >= (to_date(?, 'yyyy'))"
+                + " AND edition_date < (to_date(?, 'yyyy') + interval '1 year')";
+        
+        try (Connection conn = connectionPool.getConnection();
+                PreparedStatement ps = conn.prepareStatement(SQL)) {
+               
+               ps.setString(1, id);
+               ps.setString(2, year);
+               ps.setString(3, year);
                try (ResultSet res = ps.executeQuery()) {
                    List<Date> list = new ArrayList<>();
                    
@@ -101,6 +152,22 @@ public class NewspaperQADao {
                log.error("Failed to lookup edition dates for newspaper id {}", id, e);
                throw new DAOFailureException("Err looking up dates for newspaper id", e);
            }
+    }
+    
+    public Map<String, List<NewspaperEntity>> getMappedEditionsForNewspaperOnDate(String id, String date) throws DAOFailureException {
+        List<NewspaperEntity> entities = getEditionsForNewspaperOnDate(id, date);
+        
+        Map<String, List<NewspaperEntity>> map = new HashMap<>();
+        for(NewspaperEntity entity : entities) {
+            List<NewspaperEntity> currentEntities = map.get(entity.getEditionTitle());
+            if(currentEntities == null) {
+                currentEntities = new ArrayList<>();
+            }
+            currentEntities.add(entity);
+            map.put(entity.getEditionTitle(), currentEntities);
+        }
+        
+        return map;
     }
     
     public List<CharacterizationInfo> getCharacterizationForEntity(String entity) throws DAOFailureException {
