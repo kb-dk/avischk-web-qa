@@ -13,7 +13,8 @@ public class NewspaperEntity {
     private Date editionDate;
     private boolean singlePage;
     private int pageNumber;  
-    private String avisid; 
+    private String avisid;
+    private String avistitle; 
     private String shadowPath;  
     private String sectionTitle; 
     private String editionTitle;
@@ -68,6 +69,14 @@ public class NewspaperEntity {
 
     public void setAvisid(String avisid) {
         this.avisid = avisid;
+    }
+
+    public String getAvisTitle() {
+        return avistitle;
+    }
+
+    public void setAvisTitle(String avistitle) {
+        this.avistitle = avistitle;
     }
 
     public String getShadowPath() {

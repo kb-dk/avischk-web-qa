@@ -35,7 +35,7 @@
 	          </div>
 	        </nav>
 	
-	        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+	        <main role="main" class="col-md-12 ml-sm-auto col-lg-10 px-4">
 	        <div id="headline-div"></div>
 <!-- 	          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 	            <h1 class="h2">Dashboard</h1>
@@ -147,7 +147,8 @@
 	    }); // Display all months in a given year
 	    
 	    $(document).ready(function(){
-	        // Load page content
+	    	moment.locale("da");
+	        // load newspaper IDs
 	        loadNewspaperIDs();
 	      }); 
 	    </script>

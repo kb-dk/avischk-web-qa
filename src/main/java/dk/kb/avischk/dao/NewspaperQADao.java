@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -139,6 +138,7 @@ public class NewspaperQADao {
                        entity.setSinglePage(res.getBoolean("single_page"));
                        entity.setPageNumber(res.getInt("page_number"));
                        entity.setAvisid(res.getString("avisid"));
+                       entity.setAvisTitle(res.getString("avistitle"));
                        entity.setShadowPath(res.getString("shadow_path"));
                        entity.setSectionTitle(res.getString("section_title"));
                        entity.setEditionTitle(res.getString("edition_title"));
