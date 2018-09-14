@@ -169,6 +169,28 @@ public class NewspaperQADao {
         
         return map;
     }
+
+    public String getOrigRelPath(long handle) throws DAOFailureException {
+        log.debug("Looking up relpath by handle for handle {}", handle);
+        String SQL = "SELECT orig_relpath FROM newspaperarchive WHERE handle = ?";
+        
+        try (Connection conn = connectionPool.getConnection();
+                PreparedStatement ps = conn.prepareStatement(SQL)) {
+               
+               ps.setLong(1, handle);
+               try (ResultSet res = ps.executeQuery()) {
+                   String path = "";
+                   
+                   while(res.next()) {
+                       path = res.getString(1);
+                   }
+                   return path;
+               }
+           } catch (SQLException e) {
+               log.error("Failed to lookup relpath handle {}", handle, e);
+               throw new DAOFailureException("Err looking up relpath for handle", e);
+           }
+    }
     
     public List<CharacterizationInfo> getCharacterizationForEntity(String entity) throws DAOFailureException {
         log.debug("Looking up characterization for newspaper entity: '{}'", entity);

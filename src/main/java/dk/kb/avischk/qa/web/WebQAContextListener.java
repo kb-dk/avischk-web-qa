@@ -36,6 +36,9 @@ public class WebQAContextListener implements ServletContextListener {
             String jdbcUser = (String) ctx.lookup("java:/comp/env/avischk-web-qa/jdbc-user");
             String jdbcPassword = (String) ctx.lookup("java:/comp/env/avischk-web-qa/jdbc-password");
             NewspaperQADaoFactory.initialize(jdbcConnectionString, jdbcUser, jdbcPassword);
+            
+            String httpContentBase = (String) ctx.lookup("java:/comp/env/avischk-web-qa/http-content-base-string");
+            ContentLocationResolver.setHttpContentBase(httpContentBase);
         } catch (NamingException e) {
             throw new RuntimeException("Failed to lookup settings", e);
         } catch (PropertyVetoException e) {

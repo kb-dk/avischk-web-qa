@@ -53,6 +53,7 @@ public class WebQAService {
         }
     }
     
+    /*
     @GET
     @Path("dates/{ID}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,7 +75,7 @@ public class WebQAService {
             builder.entity("Could not get dates from backend");
             return builder.build();
         }
-    }
+    }*/
     
     @GET
     @Path("years/{ID}")
@@ -127,7 +128,7 @@ public class WebQAService {
             return builder.build();
         }
     }
-    
+    /*
     @GET 
     @Path("dates/{ID}/{date}/entities")
     @Produces(MediaType.APPLICATION_JSON)
@@ -165,7 +166,7 @@ public class WebQAService {
             return builder.build();
         }
     }
-    
+    */
     @GET 
     @Path("dates/{ID}/{date}/mappedEntities")
     @Produces(MediaType.APPLICATION_JSON)
@@ -205,11 +206,34 @@ public class WebQAService {
     }
     
     @GET
-    @Path("entity/{entity}/url")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getEntityUrl(@PathParam("entity") String entity) {
-        String url = "http://localhost/fisk/" + entity;
-        return Response.ok(url, MediaType.APPLICATION_JSON).build();
+    @Path("entity/{handle}/url/{type}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getEntityUrl(@PathParam("handle") String handle, @PathParam("type") String type) {
+        log.info("Looking up relative path for entity {}", handle);
+        long parsedHandle = Long.parseLong(handle);
+        try {
+            dao.getOrigRelPath(parsedHandle);
+            
+            String file;
+            switch (type) {
+            case "pdf":
+                file ="Fjerrit_19190107_0_Main_003.Pdf";
+                break;
+            case "tiff":
+                file ="19190107_00028_M_002.tiff";
+                break;
+            default:
+                file="naah";
+            }
+            String base = ContentLocationResolver.getHttpContentBase();
+            String url = base + "/" + file;
+            return Response.ok(url, MediaType.APPLICATION_JSON).build();
+        } catch (DAOFailureException e) {
+            log.error("Could not get relative path for handle {} (parsed: {})", handle, parsedHandle);
+            ResponseBuilder builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
+            builder.entity("Could not find handle in backend");
+            return builder.build();
+        }
     }
     
     @GET

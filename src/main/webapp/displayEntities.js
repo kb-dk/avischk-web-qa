@@ -1,18 +1,20 @@
 
+var curEntities;
+var curEntityIndex;
+var curPageIndex;
 
-function renderEntityDisplay(currentEntities, currentEntityIndex) {
+function renderEntityDisplay(currentEntities, currentEntityIndex, pageIndex) {
 
+	curEntities = currentEntities;
+	curEntityIndex = currentEntityIndex;
+	curPageIndex = pageIndex;
+	
 	var html;
-	var nav = "<div class=\"btn-toolbar mb-2 mb-md-0\"><div class=\"btn-group mr-2\" id=\"edition-nav\"></div>";
+	var nav = "<div class=\"btn-toolbar mb-2 mb-md-0\"><div class=\"btn-group mr-2\" id=\"edition-nav\"></div></div>";
 	
 	$("#primary-show").html(nav);
 	$("#primary-show").append("<div id=\"edition-show\"><h1> show me a newspaper</h1></div>");
 	
-	 //<div class="btn-toolbar mb-2 mb-md-0">
-     //<div class="btn-group mr-2" id="#edition-nav">
-     //  <button class="btn btn-sm btn-outline-secondary">Share</button>
-     //  <button class="btn btn-sm btn-outline-secondary">Export</button>
-     //</div>
 	var mapKeys = Object.keys(currentEntities);
 	var currentLocationHash = location.hash; 
 	for(var i = 0; i < mapKeys.length; i++) {
@@ -23,35 +25,110 @@ function renderEntityDisplay(currentEntities, currentEntityIndex) {
         	var newLocation = editEntityIndexInHash(location.hash, i);
         	$("#edition-nav").append("<a href=\"" + newLocation + "\" class=\"btn btn-sm btn-outline-secondary\">" + entity + "</>");
         }
-		
 	}
 	
-	/*mapKeys.forEach(function(entity) {
-		
-		$("#edition-nav").append("<button class=\"btn btn-sm btn-outline-secondary\">" + entity + "</button>");
-    });*/
-	
-	
-	
-	
-    //for(var i = 0; i < currentEntities.length; i++) {
-    	
-    	
-    	//for(var j = 0; j < currentEntities[i].length; i++) {
-    		
-    		
-    		// byg nav linje med knapper for hver edition
-    	//}
-    	//tilføj visnings område. 
-    	// vis den 'første' edition.
-    	// giv mulighed for at bladre imellem sider i den edition (hvis der er nogen)
-    	//html += "<a href=\"#/edition/" + entities[i].handle + "/\">" + entities[i].origRelpath + "</a><br>";
-    //}
+	$("#edition-show").load("entityDisplay.html", function() {
+		var mapKeys = Object.keys(curEntities);
+		var entity = curEntities[mapKeys[curEntityIndex]];
+		if(entity.length == 1) {
+			renderEntity(entity[0]);
+		} else {
+			renderSinglePagesEntity(entity, curPageIndex); 
+		}
+	});
 }
 
-function editEntityIndexInHash(origHash, newIndex) {
+function renderEntity(entity) {
+	$("#pageDisplay").html("Vis fil: " + entity.origRelpath);
+	
+	var infoHtml = "Edition titel: " + entity.editionTitle + "<br>";
+	infoHtml += "Section titel: " + entity.sectionTitle + "<br>";
+	infoHtml += "Side nummer: " + entity.pageNumber + "<br>";
+	infoHtml += "Enkelt side: " + entity.singlePage + "<br>";
+	infoHtml += "Afleverings dato: " + moment(entity.deliveryDate).format("YYYY-MM-DD") + "<br>";
+	infoHtml += "Udgivelses dato: " + moment(entity.editionDate).format("YYYY-MM-DD") + "<br>";
+	infoHtml += "Format type: " + entity.formatType + "<br>";
+	
+	$("#medataDiaplay").html(infoHtml);
+	
+	renderImageContent(entity);
+}
+
+function renderSinglePagesEntity(entity, page) {
+	for(var i=0; i<entity.length; i++) {
+		if(i == page) {
+			$("#page-nav").append("<button class=\"btn btn-sm btn-outline-secondary active\">" + i + "</button>");
+        } else {
+        	var newLocation = editPageIndexInHash(location.hash, i);
+        	$("#page-nav").append("<a href=\"" + newLocation + "\" class=\"btn btn-sm btn-outline-secondary\">" + i + "</>");
+        }
+    }
+	
+	renderEntity(entity[page]);
+}
+
+function renderImageContent(entity) {
+	
+	var format = entity.formatType.toLowerCase();
+	switch(format) {
+    case "pdf":
+        displayPdf(entity, format);
+        break;
+    case "tiff":
+    	displayTiff(entity, format);
+        break;
+    case "jp2":
+    	displayJp2(entity, format);
+        break;
+    case "jpeg":
+    	displayJpeg(entity, format);
+        break;
+    default:
+        alert("Kan på nuværrende tidspunkt ikke viser filer af typen " + entity[page].formatType.toLowerCase());
+	}
+}
+
+function displayPdf(entity, format) {
+	$("#pageDisplay").html("Vis pdf fil: " + entity.origRelpath);
+	var url = 'web-qa/entity/' + entity.handle + "/url/" + format;
+    $.get(url, function(contentUrl) {
+		PDFObject.embed(contentUrl, "#pageDisplay");
+	}, 'text');
+}
+
+function displayTiff(entity, format) {
+	$("#pageDisplay").html("Vis tiff fil: " + entity.origRelpath);
+	var url = 'web-qa/entity/' + entity.handle + "/url/" + format;
+	$.get(url, {}, function(contentUrl) {
+		var viewer = OpenSeadragon({
+	        id: "pageDisplay",
+	        prefixUrl: "openseadragon/images/",
+	        tileSources: {
+	            type: 'image',
+	            url:  contentUrl
+	        }
+	    });
+	}, 'text');
+}
+
+function displayJp2(entity) {
+	$("#pageDisplay").html("Vis jp2 fil: " + entity.origRelpath);
+}
+
+function displayJpeg(entity) {
+	$("#pageDisplay").html("Vis jpeg fil: " + entity.origRelpath);
+}
+
+function editEntityIndexInHash(origHash, newEntityIndex) {
 	var hashParts = origHash.split("/");
-	hashParts[hashParts.length-2] = newIndex; // there's an empty place..
+	hashParts[hashParts.length-3] = newEntityIndex;
+	var newHash = hashParts.join("/");
+	return newHash;
+}
+
+function editPageIndexInHash(origHash, newPageIndex) {
+	var hashParts = origHash.split("/");
+	hashParts[hashParts.length-2] = newPageIndex; 
 	var newHash = hashParts.join("/");
 	return newHash;
 }

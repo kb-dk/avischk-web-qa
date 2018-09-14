@@ -3,7 +3,7 @@ var datesInYear;
 
 function renderNewspaperForYear(newspaper, years, currentyear) {
 	var html;
-	var nav = "<div class=\"btn-toolbar mb-2 mb-md-0\"><div class=\"btn-group mr-2 d-flex justify-content-evenly flex-wrap\" id=\"year-nav\"></div>";
+	var nav = "<div class=\"btn-toolbar mb-2 mb-md-0\"><div class=\"btn-group mr-2 d-flex justify-content-evenly flex-wrap\" id=\"year-nav\"></div></div>";
 	
 	$("#primary-show").html(nav);
 	$("#primary-show").append("<div id=\"year-show\"><h1> show me a newspaper</h1></div>");
@@ -67,7 +67,7 @@ function buildCalendar(year, month, availableDates, newspaper) {
 		}
 		if(daysInMonth[d].available) {
 			calHtml += "<div class=\"col-sm-1\"><a class=\"btn btn-success btn-sm\" role=\"button\""
-				+ " href=\"#/newspapers/" + newspaper + "/" + daysInMonth[d].day.format('YYYY-MM-DD') +"/0/\">" + daysInMonth[d].day.date() + "</a></div>";
+				+ " href=\"#/newspapers/" + newspaper + "/" + daysInMonth[d].day.format('YYYY-MM-DD') +"/0/0/\">" + daysInMonth[d].day.date() + "</a></div>";
 		} else {
 			calHtml += "<div class=\"col-sm-1\"><button type=\"button\" class=\"btn btn-light btn-sm\">" + daysInMonth[d].day.date() + "</button></div>";
 		}

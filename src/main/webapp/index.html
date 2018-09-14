@@ -63,12 +63,15 @@
 	    <script src="bootstrap-4.1.3/js/bootstrap.min.js"></script>
 	    <script src="jquery.routes.js"></script>
 	    <script src="moment.locale.js"></script>
+	    <script src="pdfobject.min.js"></script>
+	    <script src="openseadragon/openseadragon.min.js"></script>
 	    <script src="displayEntities.js"></script>
 	    <script src="displayNewspapers.js"></script>
 	    <script>
 	
 	    var currentEntities;
 	    var currentEntityIndex;
+	    var currentPageIndex;
 	    
 	    var newspaperYears;
 	    var currentNewspaperYear;
@@ -106,17 +109,18 @@
         }
        
 	    
-	    function loadEntitiesForNewspaperOnDate(id, date, entityIndex) {
+	    function loadEntitiesForNewspaperOnDate(id, date, entityIndex, pageIndex) {
             var day = moment(date).format('YYYY-MM-DD');
 	        var url = 'web-qa/dates/' + id + "/" + day + '/mappedEntities';
 	        currentEntityIndex = entityIndex;
+	        currentPageIndex = pageIndex;
             $.getJSON(url, {}, function(entities) {
                 currentEntities = entities;
                 $("#headline-div").html("<h1>Entities for " + id + " on " + day + "</h1>");
                 
             }).done(function() {
                 console.log("Starting rendering of entites.");
-                renderEntityDisplay(currentEntities, currentEntityIndex);
+                renderEntityDisplay(currentEntities, currentEntityIndex, pageIndex);
             }).fail(function() {
             	    console.log("Failed to load entites");
             	    alert("Could not load entities");
@@ -141,9 +145,9 @@
 	    	//loadDatesForNewspaper(this.id, this.year);
 	    	loadYearsForNewspaper(this.id, this.year);
 	    }); // Display all years
-	    $.routes.add('/newspapers/{id:string}/{day:date}/{entity:int}', function() {
+	    $.routes.add('/newspapers/{id:string}/{day:date}/{entity:int}/{page:int}', function() {
 	    	$("#primary-show").html("Indlæser udgivelser for: " + this.id + " på den: " + this.day);
-	    	loadEntitiesForNewspaperOnDate(this.id, this.day, this.entity);
+	    	loadEntitiesForNewspaperOnDate(this.id, this.day, this.entity, this.page);
 	    }); // Display all months in a given year
 	    
 	    $(document).ready(function(){
