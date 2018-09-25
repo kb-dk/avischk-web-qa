@@ -1,5 +1,6 @@
 package dk.kb.avischk.qa.web;
 
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -211,27 +212,20 @@ public class WebQAService {
     public Response getEntityUrl(@PathParam("handle") String handle, @PathParam("type") String type) {
         log.info("Looking up relative path for entity {}", handle);
         long parsedHandle = Long.parseLong(handle);
+        String relPath = null;
         try {
-            dao.getOrigRelPath(parsedHandle);
-            
-            String file;
-            switch (type) {
-            case "pdf":
-                file ="Fjerrit_19190107_0_Main_003.Pdf";
-                break;
-            case "tiff":
-                file ="19190107_00028_M_002.tiff";
-                break;
-            default:
-                file="naah";
-            }
-            String base = ContentLocationResolver.getHttpContentBase();
-            String url = base + "/" + file;
+            relPath = dao.getOrigRelPath(parsedHandle);
+            String url = ContentLocationResolver.getContent(relPath, type);
             return Response.ok(url, MediaType.APPLICATION_JSON).build();
         } catch (DAOFailureException e) {
             log.error("Could not get relative path for handle {} (parsed: {})", handle, parsedHandle);
             ResponseBuilder builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
             builder.entity("Could not find handle in backend");
+            return builder.build();
+        } catch (FileNotFoundException e) {
+            log.error("Could not find file {} in filesystem", relPath);
+            ResponseBuilder builder = Response.status(Response.Status.NOT_FOUND);
+            builder.entity("Could not find file");
             return builder.build();
         }
     }

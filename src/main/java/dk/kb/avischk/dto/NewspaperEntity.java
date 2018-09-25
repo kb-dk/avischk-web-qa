@@ -20,6 +20,7 @@ public class NewspaperEntity {
     private String editionTitle;
     private Date deliveryDate;
     private BigInteger handle;
+    private boolean fraktur;
     
     public NewspaperEntity() {}
 
@@ -117,6 +118,14 @@ public class NewspaperEntity {
     
     public void setHandle(BigInteger handle) {
         this.handle = handle;
+    }
+
+    public boolean isFraktur() {
+        return fraktur;
+    }
+
+    public void setFraktur(boolean fraktur) {
+        this.fraktur = fraktur;
     }
     
 }

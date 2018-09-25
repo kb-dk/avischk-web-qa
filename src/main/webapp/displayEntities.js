@@ -89,7 +89,6 @@ function renderImageContent(entity) {
 }
 
 function displayPdf(entity, format) {
-	$("#pageDisplay").html("Vis pdf fil: " + entity.origRelpath);
 	var url = 'web-qa/entity/' + entity.handle + "/url/" + format;
     $.get(url, function(contentUrl) {
 		PDFObject.embed(contentUrl, "#pageDisplay");
@@ -97,7 +96,6 @@ function displayPdf(entity, format) {
 }
 
 function displayTiff(entity, format) {
-	$("#pageDisplay").html("Vis tiff fil: " + entity.origRelpath);
 	var url = 'web-qa/entity/' + entity.handle + "/url/" + format;
 	$.get(url, {}, function(contentUrl) {
 		var viewer = OpenSeadragon({
@@ -111,12 +109,29 @@ function displayTiff(entity, format) {
 	}, 'text');
 }
 
-function displayJp2(entity) {
-	$("#pageDisplay").html("Vis jp2 fil: " + entity.origRelpath);
+function displayJp2(entity, format) {
+	var url = 'web-qa/entity/' + entity.handle + "/url/" + format;
+	$.get(url, {}, function(contentUrl) {
+		var viewer = OpenSeadragon({
+	        id: "pageDisplay",
+	        prefixUrl: "openseadragon/images/",
+	        tileSources: contentUrl
+	    });
+	}, 'text');
 }
 
-function displayJpeg(entity) {
-	$("#pageDisplay").html("Vis jpeg fil: " + entity.origRelpath);
+function displayJpeg(entity, format) {
+	var url = 'web-qa/entity/' + entity.handle + "/url/" + format;
+	$.get(url, {}, function(contentUrl) {
+		var viewer = OpenSeadragon({
+	        id: "pageDisplay",
+	        prefixUrl: "openseadragon/images/",
+	        tileSources: {
+	            type: 'image',
+	            url:  contentUrl
+	        }
+	    });
+	}, 'text');
 }
 
 function editEntityIndexInHash(origHash, newEntityIndex) {

@@ -38,7 +38,12 @@ public class WebQAContextListener implements ServletContextListener {
             NewspaperQADaoFactory.initialize(jdbcConnectionString, jdbcUser, jdbcPassword);
             
             String httpContentBase = (String) ctx.lookup("java:/comp/env/avischk-web-qa/http-content-base-string");
+            String imageContentBase = (String) ctx.lookup("java:/comp/env/avischk-web-qa/image-content-base-string");
+            String iipsrvBase = (String) ctx.lookup("java:/comp/env/avischk-web-qa/iipsrv-base-string");
+            
             ContentLocationResolver.setHttpContentBase(httpContentBase);
+            ContentLocationResolver.setIipsrvBase(iipsrvBase);
+            ContentLocationResolver.setImageContentBase(imageContentBase);
         } catch (NamingException e) {
             throw new RuntimeException("Failed to lookup settings", e);
         } catch (PropertyVetoException e) {
