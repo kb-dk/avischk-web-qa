@@ -193,14 +193,15 @@ public class NewspaperQADao {
            }
     }
     
-    public List<CharacterizationInfo> getCharacterizationForEntity(String entity) throws DAOFailureException {
-        log.debug("Looking up characterization for newspaper entity: '{}'", entity);
+    public List<CharacterizationInfo> getCharacterizationForEntity(long handle) throws DAOFailureException {
+        log.debug("Looking up characterization for newspaper handle: '{}'", handle);
+        String origRelpath = getOrigRelPath(handle);
         String SQL = "SELECT * FROM characterisation_info WHERE orig_relpath = ?";
         
         try (Connection conn = connectionPool.getConnection();
                 PreparedStatement ps = conn.prepareStatement(SQL)) {
                
-               ps.setString(1, entity);
+               ps.setString(1, origRelpath);
                try (ResultSet res = ps.executeQuery()) {
                    List<CharacterizationInfo> list = new ArrayList<>();
                    
@@ -216,7 +217,7 @@ public class NewspaperQADao {
                    return list;
                }
            } catch (SQLException e) {
-               log.error("Failed to lookup characterization info for newspaper entity {}", entity, e);
+               log.error("Failed to lookup characterization info for newspaper entity {}", origRelpath, e);
                throw new DAOFailureException("Err looking up characterization info for newspaper entity", e);
            }
     }

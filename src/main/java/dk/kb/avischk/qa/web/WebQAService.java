@@ -231,22 +231,17 @@ public class WebQAService {
     }
     
     @GET
-    @Path("entity/{entity}/characterization")
+    @Path("entity/{handle}/characterization")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEntityCharacterisation(@PathParam("entity") String entity) {
-        if(entity == null) {
-            log.error("Entity was not not supplied in request");
-            ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-            builder.entity("Entity must be supplied");
-            return builder.build();
-        }
+    public Response getEntityCharacterisation(@PathParam("handle") String handle) {
+        long parsedHandle = Long.parseLong(handle);
         
         List<CharacterizationInfo> characterisations;
         try {
-            characterisations = dao.getCharacterizationForEntity(entity);
+            characterisations = dao.getCharacterizationForEntity(parsedHandle);
             return Response.ok(characterisations, MediaType.APPLICATION_JSON).build();
         } catch (DAOFailureException e) {
-            log.error("Could not get characterisation for newspaper entity {}", entity);
+            log.error("Could not get characterisation for newspaper with handle {}", handle);
             ResponseBuilder builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
             builder.entity("Could not get dates from backend");
             return builder.build();

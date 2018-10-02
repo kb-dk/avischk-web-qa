@@ -49,8 +49,9 @@ function renderEntity(entity) {
 	infoHtml += "Udgivelses dato: " + moment(entity.editionDate).format("YYYY-MM-DD") + "<br>";
 	infoHtml += "Format type: " + entity.formatType + "<br>";
 	
-	$("#medataDiaplay").html(infoHtml);
+	$("#medataDisplay").html(infoHtml);
 	
+	renderCharacterization(entity)
 	renderImageContent(entity);
 }
 
@@ -65,6 +66,16 @@ function renderSinglePagesEntity(entity, page) {
     }
 	
 	renderEntity(entity[page]);
+}
+
+function renderCharacterization(entity) {
+	var url = 'web-qa/entity/' + entity.handle + "/characterization";
+    $.get(url, function(content) {
+    	$("#medataDisplay").append("<b> Characterisation:</b><br>")
+    	for(var i=0; i<content.length; i++) {
+    		$("#medataDisplay").append("Tool: " + content[i].tool + ": " + content[i].status + "<br>");
+    	}
+	});	
 }
 
 function renderImageContent(entity) {
