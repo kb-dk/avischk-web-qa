@@ -10,8 +10,8 @@ function renderEntityDisplay(currentEntities, currentEntityIndex, pageIndex) {
 	curPageIndex = pageIndex;
 	
 	var html;
-	var nav = "<div class=\"btn-toolbar mb-2 mb-md-0\"><div class=\"btn-group mr-2\" id=\"edition-nav\"></div></div>";
-	
+	var nav = "<div class=\"btn-toolbar mb-2 mb-md-0\"><div class=\"btn-group mr-2 d-flex justify-content-evenly flex-wrap\" id=\"edition-nav\"></div></div>";
+
 	$("#primary-show").html(nav);
 	$("#primary-show").append("<div id=\"edition-show\"><h1> show me a newspaper</h1></div>");
 	
