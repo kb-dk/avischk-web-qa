@@ -58,10 +58,10 @@ function renderEntity(entity) {
 function renderSinglePagesEntity(entity, page) {
 	for(var i=0; i<entity.length; i++) {
 		if(i == page) {
-			$("#page-nav").append("<button class=\"btn btn-sm btn-outline-secondary active\">" + i + "</button>");
+			$("#page-nav").append("<button class=\"btn btn-sm btn-outline-secondary active\">" + (i+1) + "</button>");
         } else {
         	var newLocation = editPageIndexInHash(location.hash, i);
-        	$("#page-nav").append("<a href=\"" + newLocation + "\" class=\"btn btn-sm btn-outline-secondary\">" + i + "</>");
+        	$("#page-nav").append("<a href=\"" + newLocation + "\" class=\"btn btn-sm btn-outline-secondary\">" + (i+1) + "</>");
         }
     }
 	
