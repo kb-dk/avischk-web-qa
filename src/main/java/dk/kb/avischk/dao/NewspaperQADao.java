@@ -120,7 +120,8 @@ public class NewspaperQADao {
     
     public List<NewspaperEntity> getEditionsForNewspaperOnDate(String id, String date) throws DAOFailureException {
         log.debug("Looking up dates for newspaper id: '{}' on date '{}'", id, date);
-        String SQL = "SELECT * FROM newspaperarchive WHERE avisid = ? and edition_date = ? ORDER BY page_number ASC";
+        String SQL = "SELECT * FROM newspaperarchive WHERE avisid = ? AND edition_date = ?"
+                + " AND primary_copy = true ORDER BY section_title, page_number ASC";
         
         try (Connection conn = connectionPool.getConnection();
                 PreparedStatement ps = conn.prepareStatement(SQL)) {
