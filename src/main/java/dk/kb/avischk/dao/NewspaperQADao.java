@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +109,11 @@ public class NewspaperQADao {
                    List<Date> list = new ArrayList<>();
                    
                    while(res.next()) {
-                       list.add(res.getDate(1));
+                       // Workaround to ensure that summer/winter time is not causing issues  
+                       Calendar cal = Calendar.getInstance();
+                       cal.setTime(res.getDate(1));
+                       cal.set(Calendar.HOUR_OF_DAY, 12);
+                       list.add(cal.getTime());
                    }
                    return list;
                }
