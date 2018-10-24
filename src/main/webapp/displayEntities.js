@@ -91,11 +91,11 @@ function renderImageContent(entity) {
     case "jp2":
     	displayJp2(entity, format);
         break;
-    case "jpeg":
+    case "jpg":
     	displayJpeg(entity, format);
         break;
     default:
-        alert("Kan på nuværrende tidspunkt ikke viser filer af typen " + entity[page].formatType.toLowerCase());
+        alert("Kan på nuværrende tidspunkt ikke viser filer af typen " + entity.formatType.toLowerCase());
 	}
 }
 
